@@ -1,0 +1,13 @@
+A simple program to test STM32F4/7 DMA triggering by timers.
+
+Triggering DMA by a timer is necessary e.g. to sample digital inputs. 
+With STM32F723IE6, I have only been able to successfully trigger DMA by APB2/DMA2 timers (TIM1 and TIM8).
+Since there are many more APB1 timers, which are connected to DMA1, this is unfortunate. I do not know if this is a hardware bug or APB1 timers need to be treated differently.
+
+A DMA request from an APB1 timer trggers a transfer error on the first transaction. The TEIFx flag is set and NDTR counter is decremented by 1. The DMA is immediately disabled at this point.
+
+This test program triggers a P2M DMA transfer from a timer. After a change in DMA state is detected, the error flag is checked. The on onboard LED starts to blink slowly (1 Hz) when there is no error and faster (5 Hz) otherwise.
+
+The combination of DMA, DMA stream, and timer can be chosen from several options (TIM1-TIM8). The GPIO port and pin are configured for the STM32F7 Discovery board (GPIOA5) but can be easily changed for other boards. 
+
+This program is bare-metal and requires no libraries except the stm32f7xxx.h header and ARM CMSIS. Path to the toolchain and these includes are set in the Makefile.
